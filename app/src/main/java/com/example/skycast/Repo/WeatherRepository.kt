@@ -1,8 +1,5 @@
 package com.example.skycast.Repo
 
-
-import android.provider.DocumentsContract
-import android.widget.RemoteViewsService
 import com.example.skycast.model.CurrentResponseApi
 import com.example.skycast.network.ApiService
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +10,10 @@ class WeatherRepository(
     private val weatherApiService: ApiService
 ) {
 
-    suspend fun getWeatherByCity(city: String, apiKey: String): Result<CurrentResponseApi> {
+    suspend fun getWeatherByCity(city: String, apiKey: String, units: String): Result<CurrentResponseApi> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = weatherApiService.getWeatherByCity(city, apiKey)
+                val response = weatherApiService.getWeatherByCity(city, apiKey, units)
                 handleResponse(response)
             } catch (e: Exception) {
                 Result.Failure("Exception: ${e.localizedMessage}")
@@ -24,10 +21,10 @@ class WeatherRepository(
         }
     }
 
-    suspend fun getWeatherByCoordinates(lat: Double, lon: Double, apiKey: String): Result<CurrentResponseApi> {
+    suspend fun getWeatherByCoordinates(lat: Double, lon: Double, apiKey: String, units: String): Result<CurrentResponseApi> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = weatherApiService.getWeatherByCoordinates(lat, lon, apiKey)
+                val response = weatherApiService.getWeatherByCoordinates(lat, lon, apiKey, units)
                 handleResponse(response)
             } catch (e: Exception) {
                 Result.Failure("Exception: ${e.localizedMessage}")
@@ -42,6 +39,4 @@ class WeatherRepository(
             Result.Failure("Failed to fetch data: ${response.message()}")
         }
     }
-
-
 }

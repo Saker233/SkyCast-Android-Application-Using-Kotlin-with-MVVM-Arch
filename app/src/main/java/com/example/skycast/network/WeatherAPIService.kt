@@ -13,17 +13,19 @@ interface ApiService {
     @GET("data/2.5/weather")
     suspend fun getWeatherByCity(
         @Query("q") city: String,
-        @Query("appid") apiKey: String
+        @Query("appid") apiKey: String,
+        @Query("units") units: String
     ): Response<CurrentResponseApi>
 
     @GET("data/2.5/weather")
     suspend fun getWeatherByCoordinates(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("appid") apiKey: String
+        @Query("appid") apiKey: String,
+        @Query("units") units: String
     ): Response<CurrentResponseApi>
-
 }
+
 
 object RetrofitHelper {
     private const val BASE_URL = "https://api.openweathermap.org/"

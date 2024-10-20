@@ -7,12 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.skycast.Home.ViewModel.HomeViewModel
 import com.example.skycast.Home.ViewModel.HomeViewModelFactory
+import com.example.skycast.Location.LocationHelper
 import com.example.skycast.R
 import com.example.skycast.Repo.WeatherRepository
 import com.example.skycast.model.CurrentResponseApi
@@ -35,8 +38,16 @@ class HomeFragment : Fragment() {
     private lateinit var minTempTextView: TextView
     private lateinit var humidityTextView: TextView
     private lateinit var bgImage: ImageView
+    private lateinit var pressureTxt: TextView
+    private lateinit var cloudTxt: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var linearLayout: LinearLayout
+    private lateinit var linearLayout2: LinearLayout
 
     private lateinit var viewModel: HomeViewModel
+    private lateinit var locationHelper: LocationHelper
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +65,11 @@ class HomeFragment : Fragment() {
         minTempTextView = view.findViewById(R.id.minTempTxt)
         humidityTextView = view.findViewById(R.id.humidityTxt)
         bgImage = view.findViewById(R.id.bgImage)
+        pressureTxt = view.findViewById(R.id.pressureTxt)
+        cloudTxt = view.findViewById(R.id.cloudTxt)
+        progressBar = view.findViewById(R.id.progressBar)
+        linearLayout = view.findViewById(R.id.linearLayout)
+        linearLayout2 = view.findViewById(R.id.linearLayout2)
 
 
         val apiService = RetrofitHelper.service
@@ -62,40 +78,88 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
 
 
-        viewModel.fetchWeatherByCity("Tokyo", "85f1176e73af023bdc219b8e180d44d6")
+        locationHelper = LocationHelper(requireContext())
 
-        observeWeatherData()
+
+
 
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        checkLocationAndFetchWeather()
+        observeWeatherData()
+
+    }
+
+
+
+    private fun checkLocationAndFetchWeather() {
+        if (locationHelper.checkPermissions()) {
+            if (locationHelper.isLocationEnabled()) {
+                locationHelper.getFreshLocation { city ->
+                    Log.d("HomeFragment", "Fetched city: $city")
+                    fetchWeather(city)
+                }
+            } else {
+                locationHelper.enableLocationServices()
+            }
+        } else {
+            locationHelper.requestPermissions(requireActivity())
+        }
+    }
+
+
+
+
+
+
     private fun observeWeatherData() {
         lifecycleScope.launch {
             viewModel.weatherData.collect { result ->
+                Log.d("HomeFragment", "Weather data state: $result")
                 when (result) {
                     is Result.Success -> {
+                        Log.d("HomeFragment", "Weather data received: ${result.data}")
                         updateWeatherUI(result.data)
+                        progressBar.visibility = View.GONE
+                        linearLayout.visibility = View.VISIBLE
+                        linearLayout2.visibility = View.VISIBLE
                     }
                     is Result.Failure -> {
+                        progressBar.visibility = View.GONE
+                        linearLayout.visibility = View.GONE
+                        linearLayout2.visibility = View.GONE
                     }
                     is Result.Loading -> {
-
+                        Log.d("HomeFragment", "Showing progress bar")
+                        progressBar.visibility = View.VISIBLE
+                        linearLayout.visibility = View.GONE
+                        linearLayout2.visibility = View.GONE
                     }
                 }
             }
         }
     }
 
+    private fun fetchWeather(city: String) {
+        lifecycleScope.launch {
+            viewModel.fetchWeatherByCity(city, "85f1176e73af023bdc219b8e180d44d6")
+        }
+    }
+
     fun updateWeatherUI(weatherResponse: CurrentResponseApi) {
         weatherResponse?.let {
-            // Update UI components with weather data
             cityTextView.text = it.name ?: "Unknown City"
-            currentTempTextView.text = "${Math.round((it.main?.temp ?: 0.0) - 273.15)}°C"
-            maxTempTextView.text = "${Math.round((it.main?.tempMax ?: 0.0) - 273.15)}°C"
-            minTempTextView.text = "${Math.round((it.main?.tempMin ?: 0.0) - 273.15)}°C"
+            currentTempTextView.text = "${Math.round(it.main?.temp ?: 0.0)}°"
+            maxTempTextView.text = "${Math.round(it.main?.tempMax ?: 0.0)}°"
+            minTempTextView.text = "${Math.round(it.main?.tempMin ?: 0.0)}°"
             humidityTextView.text = "${Math.round((it.main?.humidity ?: 0.0).toDouble())}%"
             windTextView.text = "${Math.round(it.wind?.speed ?: 0.0)} m/s"
             statusTextView.text = it.weather?.get(0)?.main ?: "No Status"
+            pressureTxt.text = "${it.main?.pressure ?: 0} hPa"
+            cloudTxt.text = "${it.clouds?.all ?: 0}%"
 
             val apiTimeInMillis = (it.dt?.toLong() ?: 0L) * 1000L
             val timezoneOffsetInMillis = (it.timezone?.toLong() ?: 0L) * 1000L

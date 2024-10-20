@@ -76,6 +76,13 @@ dependencies {
     implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
 
 
+    //Location
+    implementation("org.osmdroid:osmdroid-android:6.1.10")
+//    implementation("libs.play.services.maps")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+
+
     // AndroidX Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
