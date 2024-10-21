@@ -1,6 +1,5 @@
 package com.example.skycast.Home.View
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.example.skycast.Home.ViewModel.HomeViewModel
 import com.example.skycast.Home.ViewModel.HomeViewModelFactory
 import com.example.skycast.Location.LocationHelper
@@ -43,6 +43,7 @@ class HomeFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var linearLayout: LinearLayout
     private lateinit var linearLayout2: LinearLayout
+    private lateinit var recyclerView: RecyclerView
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var locationHelper: LocationHelper
@@ -98,9 +99,9 @@ class HomeFragment : Fragment() {
     private fun checkLocationAndFetchWeather() {
         if (locationHelper.checkPermissions()) {
             if (locationHelper.isLocationEnabled()) {
-                locationHelper.getFreshLocation { city ->
-                    Log.d("HomeFragment", "Fetched city: $city")
-                    fetchWeather(city)
+                locationHelper.getFreshLocation { lat, lon -> // Now expecting latitude and longitude
+                    Log.d("HomeFragment", "Fetched coordinates: ($lat, $lon)")
+                    fetchWeather(lat, lon)
                 }
             } else {
                 locationHelper.enableLocationServices()
@@ -109,11 +110,6 @@ class HomeFragment : Fragment() {
             locationHelper.requestPermissions(requireActivity())
         }
     }
-
-
-
-
-
 
     private fun observeWeatherData() {
         lifecycleScope.launch {
@@ -143,11 +139,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun fetchWeather(city: String) {
+    private fun fetchWeather(lat: Double, lon: Double) {
         lifecycleScope.launch {
-            viewModel.fetchWeatherByCity(city, "85f1176e73af023bdc219b8e180d44d6")
+            viewModel.fetchWeatherByCoordinates(lat, lon, "85f1176e73af023bdc219b8e180d44d6")
         }
     }
+
 
     fun updateWeatherUI(weatherResponse: CurrentResponseApi) {
         weatherResponse?.let {

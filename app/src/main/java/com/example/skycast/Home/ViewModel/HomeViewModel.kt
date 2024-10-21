@@ -20,44 +20,17 @@ class HomeViewModel (private val weatherRepository: WeatherRepository) : ViewMod
     private var isWeatherFetched = false
     private var lastLocation: String? = null
 
-    fun fetchWeatherByCity(city: String, apiKey: String) {
-//        isWeatherFetched = false
-
-        if (isWeatherFetched) return
-
-        viewModelScope.launch(Dispatchers.IO) {
-            _weatherData.value = Result.Loading
-
-            val result = weatherRepository.getWeatherByCity(city, apiKey, "metric")
-
-            Log.d("HomeViewModel", "Weather response: $result")
-
-            _weatherData.emit(result)
-            isWeatherFetched = true
-        }
-    }
-
-    fun fetchWeatherData(location: String) {
-        if (location != lastLocation) {
-            lastLocation = location
-            fetchWeatherByCity(location, "85f1176e73af023bdc219b8e180d44d6")
-        } else {
-            Log.d("WeatherViewModel", "Same location requested: $location. Skipping API call.")
-        }
-    }
-
-    fun onLocationChanged() {
-        isWeatherFetched = false
-    }
 
 
     fun fetchWeatherByCoordinates(lat: Double, lon: Double, apiKey: String) {
+        if (isWeatherFetched) return
         viewModelScope.launch(Dispatchers.IO) {
             _weatherData.value = Result.Loading
 
             val result = weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, "metric")
 
-            _weatherData.value = result
+            _weatherData.emit(result)
+            isWeatherFetched = true
         }
     }
 

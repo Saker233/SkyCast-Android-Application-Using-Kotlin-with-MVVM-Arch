@@ -1,7 +1,7 @@
 package com.example.skycast.network
 
-import android.provider.DocumentsContract
 import com.example.skycast.model.CurrentResponseApi
+import com.example.skycast.model.FiveDaysResponseApi
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -9,14 +9,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-
-    @GET("data/2.5/weather")
-    suspend fun getWeatherByCity(
-        @Query("q") city: String,
-        @Query("appid") apiKey: String,
-        @Query("units") units: String
-    ): Response<CurrentResponseApi>
-
     @GET("data/2.5/weather")
     suspend fun getWeatherByCoordinates(
         @Query("lat") lat: Double,
