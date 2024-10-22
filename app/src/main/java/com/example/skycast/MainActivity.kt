@@ -37,26 +37,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val pagerAdapter = MyPagerAdapter(this)
-//        viewPager.adapter = pagerAdapter
-
-//        val apiService = RetrofitHelper.service
-//        weatherRepository = WeatherRepository(apiService)
-
         viewPager = findViewById(R.id.viewPager)
         val pagerAdapter = MyPagerAdapter(this)
         viewPager.adapter = pagerAdapter
 
-
-//        fetchWeatherByCity("Giza")
-//
-//        fetchWeatherByCoordinates(30.0444, 31.2357)
-
-
-
     }
 
-    private inner class MyPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
+    private inner class MyPagerAdapter(activity: FragmentActivity) :
+        FragmentStateAdapter(activity) {
         override fun getItemCount(): Int = 1
 
         override fun createFragment(position: Int): Fragment {
@@ -66,76 +54,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-//    private fun fetchWeatherByCity(city: String) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            try {
-//                withContext(Dispatchers.Main) {
-//                    Log.d("WeatherData", "Loading...")
-//                }
-//
-//                val response = weatherRepository.getWeatherByCity(city, apiKey)
-//                withContext(Dispatchers.Main) {
-//                    when (response) {
-//                        is Result.Success -> {
-//                            val weatherData = response.data
-//                            Log.d("WeatherData", "Weather data: $weatherData")
-//                        }
-//                        is Result.Failure -> {
-//                            Log.e("WeatherData", "Error: ${response.error}")
-//                        }
-//
-//                        is Result.Loading -> {
-//                            Log.d("WeatherData", "Loading...")
-//                        }
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                Log.e("WeatherData", "Exception: ${e.message}")
-//            }
-//        }
-//    }
-
-
-
-//    private fun fetchWeatherByCoordinates(lat: Double, lon: Double) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            try {
-//                withContext(Dispatchers.Main) {
-//                    Log.d("WeatherData", "Loading...")
-//                }
-//
-//                val response = weatherRepository.getWeatherByCoordinates(lat, lon, apiKey)
-//                withContext(Dispatchers.Main) {
-//                    when (response) {
-//                        is Result.Success -> {
-//                            val weatherData = response.data
-//                            Log.d("WeatherData", "Weather data: $weatherData")
-//                        }
-//                        is Result.Failure -> {
-//                            Log.e("WeatherData", "Error: ${response.error}")
-//                        }
-//                        is Result.Loading -> {
-//                            Log.d("WeatherData", "Loading...")
-//                        }
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                Log.e("WeatherData", "Exception: ${e.message}")
-//            }
-//        }
-//    }
 }
-
-//class MyPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-//    override fun getItemCount(): Int = 4 // Number of views
-//    override fun createFragment(position: Int): Fragment {
-//        return when (position) {
-////            0 -> FirstFragment()
-////            1 -> SecondFragment()
-////            2 -> ThirdFragment()
-////            3 -> FourthFragment()
-////            else -> FirstFragment()
-//        }
-//    }
-//}

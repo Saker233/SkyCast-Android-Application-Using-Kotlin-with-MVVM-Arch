@@ -71,9 +71,12 @@ dependencies {
 
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
-
-
     implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
+
+
+//    implementation ("com.eightbitlab:blurview:1.6.6")
+
+    implementation ("com.github.Dimezis:BlurView:version-2.0.5")
 
 
     //Location

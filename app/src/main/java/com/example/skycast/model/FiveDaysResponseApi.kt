@@ -10,7 +10,7 @@ data class FiveDaysResponseApi(
     @SerializedName("cod")
     var cod: String?,
     @SerializedName("list")
-    var list: List<Item0?>?,
+    var list: List<data>?,
     @SerializedName("message")
     var message: Int?
 ) {
@@ -40,7 +40,7 @@ data class FiveDaysResponseApi(
         )
     }
 
-    data class Item0(
+    data class data(
         @SerializedName("clouds")
         var clouds: Clouds?,
         @SerializedName("dt")

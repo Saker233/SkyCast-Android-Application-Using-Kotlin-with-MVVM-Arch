@@ -63,21 +63,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerHourly"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="400dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/RecuclerDaily"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="600dp"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -88,7 +73,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtCity">
 
-        <!-- Wind Section -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -123,7 +107,6 @@
 
         </LinearLayout>
 
-        <!-- Current Temperature Section (moved to the middle) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -203,7 +186,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Humidity Section (moved to the end) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -241,7 +223,6 @@
     </LinearLayout>
 
 
-    <!-- New Horizontal Layout for Pressure and Cloud -->
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="421dp"
@@ -252,7 +233,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <!-- Pressure Section -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -286,7 +266,6 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Cloud Section -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -321,5 +300,40 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/forecast_bg"
+        android:visibility="visible"
+        app:blurOverlayColor="#10ffffff"
+        app:layout_constraintBottom_toBottomOf="@+id/bgImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/forecastView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </eightbitlab.com.blurview.BlurView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

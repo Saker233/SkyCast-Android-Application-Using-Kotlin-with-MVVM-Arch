@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.skycast.Home.ViewModel.HomeViewModel
 import com.example.skycast.Home.ViewModel.HomeViewModelFactory
@@ -43,7 +44,10 @@ class HomeFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var linearLayout: LinearLayout
     private lateinit var linearLayout2: LinearLayout
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var forecastView: RecyclerView
+    private lateinit var weatherAdapter: WeatherAdapter
+    private lateinit var bluerView: View
+
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var locationHelper: LocationHelper
@@ -71,12 +75,21 @@ class HomeFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
         linearLayout = view.findViewById(R.id.linearLayout)
         linearLayout2 = view.findViewById(R.id.linearLayout2)
+        forecastView = view.findViewById(R.id.forecastView)
+        bluerView = view.findViewById(R.id.blurView)
 
 
         val apiService = RetrofitHelper.service
         val weatherRepository = WeatherRepository(apiService)
         val factory = HomeViewModelFactory(weatherRepository)
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
+
+
+        forecastView = view.findViewById(R.id.forecastView)
+        weatherAdapter = WeatherAdapter(emptyList())
+        forecastView.adapter = weatherAdapter
+
+        forecastView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
 
         locationHelper = LocationHelper(requireContext())
@@ -99,9 +112,10 @@ class HomeFragment : Fragment() {
     private fun checkLocationAndFetchWeather() {
         if (locationHelper.checkPermissions()) {
             if (locationHelper.isLocationEnabled()) {
-                locationHelper.getFreshLocation { lat, lon -> // Now expecting latitude and longitude
+                locationHelper.getFreshLocation { lat, lon ->
                     Log.d("HomeFragment", "Fetched coordinates: ($lat, $lon)")
                     fetchWeather(lat, lon)
+                    viewModel.fetchFiveDayWeatherByCoordinates(lat, lon, "85f1176e73af023bdc219b8e180d44d6")
                 }
             } else {
                 locationHelper.enableLocationServices()
@@ -122,17 +136,35 @@ class HomeFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         linearLayout.visibility = View.VISIBLE
                         linearLayout2.visibility = View.VISIBLE
+                        bluerView.visibility = View.VISIBLE
                     }
                     is Result.Failure -> {
                         progressBar.visibility = View.GONE
                         linearLayout.visibility = View.GONE
                         linearLayout2.visibility = View.GONE
+                        bluerView.visibility = View.GONE
                     }
                     is Result.Loading -> {
                         Log.d("HomeFragment", "Showing progress bar")
                         progressBar.visibility = View.VISIBLE
                         linearLayout.visibility = View.GONE
                         linearLayout2.visibility = View.GONE
+                        bluerView.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.forecastData.collect { result ->
+                when (result) {
+                    is Result.Success -> {
+                        Log.d("HomeFragment", "Five-day weather data: ${result.data}")
+                        weatherAdapter.updateWeatherList(result.data.list ?: emptyList())
+                    }
+                    is Result.Loading -> {
+                    }
+                    is Result.Failure -> {
                     }
                 }
             }

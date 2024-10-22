@@ -16,6 +16,14 @@ interface ApiService {
         @Query("appid") apiKey: String,
         @Query("units") units: String
     ): Response<CurrentResponseApi>
+
+    @GET("data/2.5/forecast")
+    suspend fun getFiveDayWeatherByCoordinates(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("appid") apiKey: String,
+        @Query("units") units: String
+    ): Response<FiveDaysResponseApi>
 }
 
 

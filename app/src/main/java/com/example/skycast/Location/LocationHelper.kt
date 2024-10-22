@@ -60,27 +60,6 @@ class LocationHelper(private val context: Context) {
         context.startActivity(intent)
     }
 
-//    @SuppressLint("MissingPermission")
-//    fun getFreshLocation(onLocationFetched: (Double, Double) -> Unit) {
-//        fusedLocationProviderClient.requestLocationUpdates(
-//            LocationRequest.Builder(0).apply {
-//                setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-//            }.build(),
-//            object : LocationCallback() {
-//                override fun onLocationResult(locationResult: LocationResult) {
-//                    val latitude = locationResult.lastLocation?.latitude
-//                    val longitude = locationResult.lastLocation?.longitude
-//
-//                    if (latitude != null && longitude != null) {
-//                        onLocationFetched(latitude, longitude)
-//                    } else {
-//                        Toast.makeText(context, "Location not found", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            },
-//            Looper.getMainLooper()
-//        )
-//    }
 
     @SuppressLint("MissingPermission")
     fun getFreshLocation(onLocationFetched: (Double, Double) -> Unit) {
@@ -104,34 +83,4 @@ class LocationHelper(private val context: Context) {
         )
     }
 
-
-
-//    @SuppressLint("MissingPermission")
-//    fun getFreshLocation(onLocationFetched: (String) -> Unit) {
-//        fusedLocationProviderClient.requestLocationUpdates(
-//            LocationRequest.Builder(0).apply {
-//                setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-//            }.build(),
-//            object : LocationCallback() {
-//                override fun onLocationResult(locationResult: LocationResult) {
-//                    val latitude = locationResult.lastLocation?.latitude
-//                    val longitude = locationResult.lastLocation?.longitude
-//
-//                    if (latitude != null && longitude != null) {
-//                        try {
-//                            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-//                            if (addresses != null && addresses.isNotEmpty()) {
-//                                val city = addresses[0].locality ?: "Unknown City"
-//                                onLocationFetched(city)
-//                            }
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                            Toast.makeText(context, "Error fetching city", Toast.LENGTH_SHORT).show()
-//                        }
-//                    }
-//                }
-//            },
-//            Looper.getMainLooper()
-//        )
-//    }
 }
