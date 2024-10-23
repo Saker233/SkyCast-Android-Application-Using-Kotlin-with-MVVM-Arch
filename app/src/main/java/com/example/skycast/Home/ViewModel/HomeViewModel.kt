@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.skycast.network.Result
+import kotlinx.coroutines.delay
 
 
 class HomeViewModel (private val weatherRepository: WeatherRepository) : ViewModel() {
@@ -30,26 +31,22 @@ class HomeViewModel (private val weatherRepository: WeatherRepository) : ViewMod
 
 
     fun fetchWeatherByCoordinates(lat: Double, lon: Double, apiKey: String) {
-        if (isWeatherFetched) return
         viewModelScope.launch(Dispatchers.IO) {
             _weatherData.value = Result.Loading
 
             val result = weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, "metric")
-
+            Log.d("HomeViewModel", "Weather Result: $result")
             _weatherData.emit(result)
-            isWeatherFetched = true
         }
     }
 
 
     fun fetchFiveDayWeatherByCoordinates(lat: Double, lon: Double, apiKey: String) {
-        if (isForecastFetched) return
         viewModelScope.launch(Dispatchers.IO) {
             _forecastData.value = Result.Loading
             val result = weatherRepository.getFiveDayWeatherByCoordinates(lat, lon, apiKey, "metric")
             Log.d("HomeViewModel", "Forecast Result: $result")
             _forecastData.emit(result)
-            isForecastFetched = true
         }
     }
 

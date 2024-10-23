@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private lateinit var viewPager: ViewPager2
+    lateinit var viewPager: ViewPager2
 
 
 

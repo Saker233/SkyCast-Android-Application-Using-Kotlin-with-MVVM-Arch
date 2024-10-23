@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -49,10 +50,13 @@ class HomeFragment : Fragment() {
     private lateinit var forecastView: RecyclerView
     private lateinit var weatherAdapter: WeatherAdapter
     private lateinit var bluerView: View
+    private lateinit var btnRefresh: ImageButton
 
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var locationHelper: LocationHelper
+    private var isWeatherFetched = false
+
 
 
 
@@ -80,6 +84,7 @@ class HomeFragment : Fragment() {
         linearLayout2 = view.findViewById(R.id.linearLayout2)
         forecastView = view.findViewById(R.id.forecastView)
         bluerView = view.findViewById(R.id.blurView)
+        btnRefresh = view.findViewById(R.id.btnRefresh)
 
 
         val apiService = RetrofitHelper.service
@@ -99,6 +104,13 @@ class HomeFragment : Fragment() {
         locationHelper = LocationHelper(requireContext())
 
 
+        btnRefresh.setOnClickListener {
+            isWeatherFetched = false
+            checkLocationAndFetchWeather()
+            observeWeatherData()
+        }
+
+
 
 
         return view
@@ -113,13 +125,29 @@ class HomeFragment : Fragment() {
 
 
 
+
+    fun updateWeatherForNewLocation(lat: Double, lon: Double, placeName: String) {
+        Log.d("HomeFragment", "Updating to new location: Latitude: $lat, Longitude: $lon, Place Name: $placeName")
+
+        fetchWeather(lat, lon)
+        viewModel.fetchFiveDayWeatherByCoordinates(lat, lon, "85f1176e73af023bdc219b8e180d44d6")
+        cityTextView.text = placeName
+    }
+
+
+
+
+
     private fun checkLocationAndFetchWeather() {
         if (locationHelper.checkPermissions()) {
             if (locationHelper.isLocationEnabled()) {
                 locationHelper.getFreshLocation { lat, lon ->
-                    Log.d("HomeFragment", "Fetched coordinates: ($lat, $lon)")
-                    fetchWeather(lat, lon)
-                    viewModel.fetchFiveDayWeatherByCoordinates(lat, lon, "85f1176e73af023bdc219b8e180d44d6")
+                    if (!isWeatherFetched) {
+                        Log.d("HomeFragment", "Fetched coordinates: ($lat, $lon)")
+                        fetchWeather(lat, lon)
+                        viewModel.fetchFiveDayWeatherByCoordinates(lat, lon, "85f1176e73af023bdc219b8e180d44d6")
+                        isWeatherFetched = true
+                    }
                 }
             } else {
                 locationHelper.enableLocationServices()
@@ -278,5 +306,7 @@ class HomeFragment : Fragment() {
             emissionRate = 100.0f
         }
     }
+
+
 
 }

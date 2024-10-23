@@ -8,6 +8,9 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -37,8 +40,11 @@ class MapActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var imgAddLocation: ImageButton
     private lateinit var marker: Marker
+    private lateinit var searchBar: EditText
 
     private lateinit var favoriteViewModel: FavoriteViewModel
+    private lateinit var gestureDetector: GestureDetector
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +62,15 @@ class MapActivity : AppCompatActivity() {
         mapView.setMultiTouchControls(true)
 
         imgAddLocation = findViewById(R.id.imgAddLocation)
+        searchBar = findViewById(R.id.searchBar)
+
+        searchBar.setOnEditorActionListener { _, _, _ ->
+            val locationName = searchBar.text.toString()
+            if (locationName.isNotEmpty()) {
+                searchLocation(locationName)
+            }
+            true
+        }
 
         marker = Marker(mapView)
         mapView.overlays.add(marker)
@@ -89,13 +104,6 @@ class MapActivity : AppCompatActivity() {
                 placeName = fetchedPlaceName
             )
 
-
-
-
-
-
-
-
             val resultIntent = Intent().apply {
                 putExtra("selected_latitude", selectedLatitude)
                 putExtra("selected_longitude", selectedLongitude)
@@ -122,15 +130,52 @@ class MapActivity : AppCompatActivity() {
             )
         }
 
+        gestureDetector = GestureDetector(this, GestureListener())
+
+
+//        mapView.setOnTouchListener { _, event ->
+//            if (event.action == android.view.MotionEvent.ACTION_UP) {
+//                val proj = mapView.projection
+//                val geoPoint = proj.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
+//
+//                moveMarkerTo(geoPoint)
+//            }
+//            false
+//        }
 
         mapView.setOnTouchListener { _, event ->
-            if (event.action == android.view.MotionEvent.ACTION_UP) {
-                val proj = mapView.projection
-                val geoPoint = proj.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
-
-                moveMarkerTo(geoPoint)
-            }
+            gestureDetector.onTouchEvent(event)
             true
+        }
+    }
+
+    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            val proj = mapView.projection
+            val geoPoint = proj.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
+            moveMarkerTo(geoPoint)
+            return true
+        }
+
+        override fun onScroll(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
+            val startPoint = GeoPoint(mapView.projection.fromPixels(e1!!.x.toInt(), e1.y.toInt()).latitude,
+                mapView.projection.fromPixels(e1.x.toInt(), e1.y.toInt()).longitude)
+            val endPoint = GeoPoint(mapView.projection.fromPixels(e2!!.x.toInt(), e2.y.toInt()).latitude,
+                mapView.projection.fromPixels(e2.x.toInt(), e2.y.toInt()).longitude)
+
+            val newGeoPoint = GeoPoint(
+                startPoint.latitude - (distanceY / mapView.height * (mapView.boundingBox.latNorth - mapView.boundingBox.latSouth)),
+                startPoint.longitude + (distanceX / mapView.width * (mapView.boundingBox.lonEast - mapView.boundingBox.lonWest))
+            )
+
+            mapView.controller.setCenter(newGeoPoint)
+
+            return true
         }
     }
 
@@ -191,6 +236,33 @@ class MapActivity : AppCompatActivity() {
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
+    private fun searchLocation(locationName: String) {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        Thread {
+            try {
+                val addresses = geocoder.getFromLocationName(locationName, 1)
+                if (addresses != null) {
+                    if (addresses.isNotEmpty()) {
+                        val location = addresses[0]
+                        val geoPoint = GeoPoint(location.latitude, location.longitude)
+
+                        runOnUiThread {
+                            moveMarkerTo(geoPoint)
+                            mapView.controller.setCenter(geoPoint)
+                            mapView.invalidate()
+                        }
+                    } else {
+                        runOnUiThread {
+                            Log.e("MapActivity", "Location not found")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MapActivity", "Geocoding error: ${e.message}")
+            }
+        }.start()
     }
 
 }

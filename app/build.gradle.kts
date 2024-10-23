@@ -75,7 +75,9 @@ dependencies {
     implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
 
 
-//    implementation ("com.eightbitlab:blurview:1.6.6")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.6.0")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.6.0")
+
 
     implementation ("com.github.Dimezis:BlurView:version-2.0.5")
 

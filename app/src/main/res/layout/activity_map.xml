@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- MapView fills the entire screen -->
     <org.osmdroid.views.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
@@ -18,4 +17,14 @@
         android:layout_margin="50dp"
         app:srcCompat="@drawable/plus"
         app:tint="@android:color/black" />
+
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:hint="Search for a location"
+        android:padding="10dp"
+        android:background="@android:drawable/edit_text"
+        android:layout_margin="30dp" />
 </RelativeLayout>

@@ -15,7 +15,8 @@ import com.example.skycast.model.FavoritePlaceItem
 
 class FavoritePlaceAdapter(
     private val places: List<FavoritePlaceItem>,
-    private val onDeleteClick: (FavoritePlaceItem) -> Unit
+    private val onDeleteClick: (FavoritePlaceItem) -> Unit,
+    private val onPlaceClick: (Double, Double, String) -> Unit
 ) : RecyclerView.Adapter<FavoritePlaceAdapter.FavoritePlaceViewHolder>() {
 
     inner class FavoritePlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,7 +28,12 @@ class FavoritePlaceAdapter(
             deleteButton.setOnClickListener {
                 onDeleteClick(favoritePlace)
             }
+            itemView.setOnClickListener {
+                onPlaceClick(favoritePlace.latitude, favoritePlace.longitude, favoritePlace.placeName)
+            }
         }
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritePlaceViewHolder {
