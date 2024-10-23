@@ -50,7 +50,7 @@ class HomeFragment : Fragment() {
     private lateinit var forecastView: RecyclerView
     private lateinit var weatherAdapter: WeatherAdapter
     private lateinit var bluerView: View
-    private lateinit var btnRefresh: ImageButton
+    private lateinit var btnRefresh: ImageView
 
 
     private lateinit var viewModel: HomeViewModel
