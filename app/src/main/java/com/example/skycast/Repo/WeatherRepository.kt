@@ -1,15 +1,20 @@
 package com.example.skycast.Repo
 
 import android.util.Log
+import com.example.skycast.db.PlaceDao
 import com.example.skycast.model.CurrentResponseApi
+import com.example.skycast.model.FavoritePlaceItem
 import com.example.skycast.model.FiveDaysResponseApi
 import com.example.skycast.network.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.example.skycast.network.Result
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class WeatherRepository(
-    private val weatherApiService: ApiService
+    private val weatherApiService: ApiService,
+    private val placeDao: PlaceDao
 ) {
 
 
@@ -47,4 +52,28 @@ class WeatherRepository(
 
         }
     }
+
+    suspend fun insertPlace(place: FavoritePlaceItem): Result<Unit> {
+        return withContext(Dispatchers.IO) {
+            return@withContext try {
+                placeDao.insert(place)
+                Result.Success(Unit)
+            } catch (e: Exception) {
+                Result.Failure("Error inserting place: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun deletePlace(place: FavoritePlaceItem) {
+        withContext(Dispatchers.IO) {
+            placeDao.deletePlace(place.id)
+        }
+    }
+
+    fun getAllPlaces(): Flow<List<FavoritePlaceItem>> {
+        return placeDao.getAllPlaces()
+    }
+
+
+
 }

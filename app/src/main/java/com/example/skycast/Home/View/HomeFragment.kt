@@ -19,6 +19,8 @@ import com.example.skycast.Home.ViewModel.HomeViewModelFactory
 import com.example.skycast.Location.LocationHelper
 import com.example.skycast.R
 import com.example.skycast.Repo.WeatherRepository
+import com.example.skycast.db.FavoritePlacesDatabase
+import com.example.skycast.db.PlaceDao
 import com.example.skycast.model.CurrentResponseApi
 import com.github.matteobattilana.weather.PrecipType
 import com.github.matteobattilana.weather.WeatherView
@@ -54,6 +56,7 @@ class HomeFragment : Fragment() {
 
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,7 +83,8 @@ class HomeFragment : Fragment() {
 
 
         val apiService = RetrofitHelper.service
-        val weatherRepository = WeatherRepository(apiService)
+        val placeDao = FavoritePlacesDatabase.getDatabase(requireContext()).placeDao()
+        val weatherRepository = WeatherRepository(apiService, placeDao)
         val factory = HomeViewModelFactory(weatherRepository)
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
 
