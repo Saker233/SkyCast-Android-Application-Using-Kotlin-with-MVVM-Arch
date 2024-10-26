@@ -10,6 +10,7 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
@@ -45,6 +46,9 @@ class MapActivity : AppCompatActivity() {
     private lateinit var favoriteViewModel: FavoriteViewModel
     private lateinit var gestureDetector: GestureDetector
 
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
+
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,10 +60,17 @@ class MapActivity : AppCompatActivity() {
 
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
+        Configuration.getInstance().osmdroidBasePath = cacheDir
+        Configuration.getInstance().osmdroidTileCache = cacheDir
+
 
         mapView = findViewById(R.id.mapView)
         mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
         mapView.setMultiTouchControls(true)
+        mapView.setBuiltInZoomControls(true)
+
+
+        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
 
         imgAddLocation = findViewById(R.id.imgAddLocation)
         searchBar = findViewById(R.id.searchBar)
@@ -133,15 +144,6 @@ class MapActivity : AppCompatActivity() {
         gestureDetector = GestureDetector(this, GestureListener())
 
 
-//        mapView.setOnTouchListener { _, event ->
-//            if (event.action == android.view.MotionEvent.ACTION_UP) {
-//                val proj = mapView.projection
-//                val geoPoint = proj.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
-//
-//                moveMarkerTo(geoPoint)
-//            }
-//            false
-//        }
 
         mapView.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
@@ -149,7 +151,11 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+
+
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+        private var scaleGestureDetector: ScaleGestureDetector = ScaleGestureDetector(this@MapActivity, ScaleListener())
+        private val scrollSpeedFactor = 0
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
             val proj = mapView.projection
             val geoPoint = proj.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
@@ -163,21 +169,47 @@ class MapActivity : AppCompatActivity() {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            val startPoint = GeoPoint(mapView.projection.fromPixels(e1!!.x.toInt(), e1.y.toInt()).latitude,
-                mapView.projection.fromPixels(e1.x.toInt(), e1.y.toInt()).longitude)
-            val endPoint = GeoPoint(mapView.projection.fromPixels(e2!!.x.toInt(), e2.y.toInt()).latitude,
-                mapView.projection.fromPixels(e2.x.toInt(), e2.y.toInt()).longitude)
+            if (e1 == null) return false
 
-            val newGeoPoint = GeoPoint(
-                startPoint.latitude - (distanceY / mapView.height * (mapView.boundingBox.latNorth - mapView.boundingBox.latSouth)),
-                startPoint.longitude + (distanceX / mapView.width * (mapView.boundingBox.lonEast - mapView.boundingBox.lonWest))
+            val proj = mapView.projection
+            val startGeoPoint = proj.fromPixels(e1.x.toInt(), e1.y.toInt()) as GeoPoint
+            val endGeoPoint = proj.fromPixels(e2.x.toInt(), e2.y.toInt()) as GeoPoint
+
+            // Calculate the change in position
+            val latAdjustment = (startGeoPoint.latitude - endGeoPoint.latitude) * scrollSpeedFactor
+            val lonAdjustment = (endGeoPoint.longitude - startGeoPoint.longitude) * scrollSpeedFactor
+
+            // Set the new center of the map
+            mapView.controller.setCenter(
+                GeoPoint(
+                    startGeoPoint.latitude + latAdjustment,
+                    startGeoPoint.longitude + lonAdjustment
+                )
             )
-
-            mapView.controller.setCenter(newGeoPoint)
 
             return true
         }
     }
+
+
+    private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val scaleFactor = detector.scaleFactor
+
+            // Adjust zoom level based on the scale factor
+            if (scaleFactor > 1) {
+                // Zoom in
+                mapView.controller.zoomIn()
+            } else {
+                // Zoom out
+                mapView.controller.zoomOut()
+            }
+
+            return true
+        }
+    }
+
+
 
 
 
@@ -210,12 +242,10 @@ class MapActivity : AppCompatActivity() {
 
                 Log.d("MapActivity", "Current Latitude: $latitude, Longitude: $longitude")
 
-                // Set the location on the map
                 val geoPoint = GeoPoint(latitude, longitude)
                 mapView.controller.setZoom(18.0)
                 mapView.controller.setCenter(geoPoint)
 
-                // Add a marker at the user's current location
                 val marker = Marker(mapView)
                 marker.position = geoPoint
                 marker.title = "Current Location"
@@ -264,5 +294,22 @@ class MapActivity : AppCompatActivity() {
             }
         }.start()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.overlays.clear()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+
 
 }

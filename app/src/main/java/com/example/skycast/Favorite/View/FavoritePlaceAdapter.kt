@@ -21,7 +21,7 @@ class FavoritePlaceAdapter(
 
     inner class FavoritePlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val placeName: TextView = itemView.findViewById(R.id.tv_place_name)
-        val deleteButton: Button = itemView.findViewById(R.id.btnRemove)
+        val deleteButton: ImageView = itemView.findViewById(R.id.btnRemove)
 
         fun bind(favoritePlace: FavoritePlaceItem) {
             placeName.text = favoritePlace.placeName

@@ -23,8 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:hint="Search for a location"
-        android:padding="10dp"
+        android:layout_margin="30dp"
         android:background="@android:drawable/edit_text"
-        android:layout_margin="30dp" />
+        android:hint="Search for a location"
+        android:padding="10dp" />
 </RelativeLayout>
