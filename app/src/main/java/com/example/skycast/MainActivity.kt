@@ -9,9 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.skycast.Alert.View.AlertFragment
 import com.example.skycast.Favorite.View.FavoriteFragment
 import com.example.skycast.Home.View.HomeFragment
-
+import com.example.skycast.Settings.SettingsFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,12 +36,14 @@ class MainActivity : AppCompatActivity() {
 
     private inner class MyPagerAdapter(activity: FragmentActivity) :
         FragmentStateAdapter(activity) {
-        override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> HomeFragment()
                 1 -> FavoriteFragment()
+                2 -> AlertFragment()
+                3 -> SettingsFragment()
                 else -> HomeFragment()
             }
         }

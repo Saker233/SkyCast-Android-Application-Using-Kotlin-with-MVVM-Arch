@@ -4,5 +4,16 @@
     <string name="favplaces">Fav Places :</string>
     <string name="removefavroite">Remove From Favoirte!</string>
     <string name="favvplaces">Favorite Places</string>
+    <string name="settings">Settings</string>
+    <string name="temp">Temperature Unit</string>
+    <string name="celsisu">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="lang">Language</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="emable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="alert">Alerts</string>
 
 </resources>
