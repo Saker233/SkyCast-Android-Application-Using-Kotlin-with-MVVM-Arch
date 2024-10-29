@@ -1,9 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.SkyCast" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/black</item> <!-- Set primary color to pink -->
-        <item name="colorOnPrimary">@color/black</item> <!-- Color of text/icons on primary -->
+        <item name="colorPrimary">@color/dark_gray</item>
+        <item name="colorOnPrimary">@color/black</item>
 
         <!-- You can customize other colors as needed -->
         <item name="colorSecondary">@color/dark_gray</item>

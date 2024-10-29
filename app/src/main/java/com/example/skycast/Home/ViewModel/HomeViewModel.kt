@@ -6,13 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.skycast.Repo.WeatherRepository
 import com.example.skycast.model.CurrentResponseApi
 import com.example.skycast.model.FiveDaysResponseApi
-import com.github.matteobattilana.weather.WeatherData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.skycast.network.Result
-import kotlinx.coroutines.delay
 
 
 class HomeViewModel (private val weatherRepository: WeatherRepository) : ViewModel() {
@@ -24,9 +22,7 @@ class HomeViewModel (private val weatherRepository: WeatherRepository) : ViewMod
     val forecastData: StateFlow<Result<FiveDaysResponseApi>> get() = _forecastData
 
 
-    private var isWeatherFetched = false
-    private var isForecastFetched = false
-    private var lastLocation: String? = null
+
 
 
 

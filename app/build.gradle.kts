@@ -82,6 +82,9 @@ dependencies {
     implementation ("com.github.Dimezis:BlurView:version-2.0.5")
 
 
+    implementation ("androidx.work:work-runtime-ktx:2.8.0")
+
+
     //Location
     implementation("org.osmdroid:osmdroid-android:6.1.10")
 //    implementation("libs.play.services.maps")

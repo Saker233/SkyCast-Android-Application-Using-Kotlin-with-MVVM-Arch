@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.example.skycast.network.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class WeatherRepository(
     private val weatherApiService: ApiService,

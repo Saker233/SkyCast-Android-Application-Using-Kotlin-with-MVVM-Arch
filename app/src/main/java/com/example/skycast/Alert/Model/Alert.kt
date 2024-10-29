@@ -5,11 +5,14 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "alerts")
 data class Alert(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    val alertId: Long,
     val title: String,
     val duration: Long,
-    val type: String,
-    val isActive: Boolean
+    val time: String,
+    val type: String = "Weather Alert",
+    val isActive: Boolean = true,
+    val latitude: Double,
+    val longitude: Double
 )
-
 

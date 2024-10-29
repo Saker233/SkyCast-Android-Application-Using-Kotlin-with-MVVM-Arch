@@ -17,4 +17,10 @@ interface AlertDao {
 
     @Delete
     suspend fun deleteAlert(alert: Alert)
+
+    @Query("SELECT * FROM alerts WHERE id = :alertId LIMIT 1")
+    suspend fun getAlertById(alertId: Long): Alert?
+
+    @Query("DELETE FROM alerts WHERE alertId = :alertId")
+    suspend fun deleteAlertByAlertId(alertId: Long)
 }

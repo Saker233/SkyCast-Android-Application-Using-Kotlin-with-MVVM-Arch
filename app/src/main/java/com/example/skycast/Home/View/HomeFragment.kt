@@ -86,7 +86,7 @@ class HomeFragment : Fragment() {
         bluerView = view.findViewById(R.id.blurView)
         btnRefresh = view.findViewById(R.id.btnRefresh)
 
-
+        // issue
         val apiService = RetrofitHelper.service
         val placeDao = FavoritePlacesDatabase.getDatabase(requireContext()).placeDao()
         val weatherRepository = WeatherRepository(apiService, placeDao)
