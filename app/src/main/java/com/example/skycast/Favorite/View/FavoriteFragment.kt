@@ -86,16 +86,6 @@ class FavoriteFragment : Fragment() {
         return view
     }
 
-//    private fun onFavoritePlaceClicked(lat: Double, lon: Double, placeName: String) {
-//        val apiKey = "85f1176e73af023bdc219b8e180d44d6"
-//        homeViewModel.fetchWeatherByCoordinates(lat, lon, apiKey)
-//        homeViewModel.fetchFiveDayWeatherByCoordinates(lat, lon, apiKey)
-//
-//
-//        val position = 0
-//        (requireActivity() as MainActivity).viewPager.setCurrentItem(position, true)
-//
-//    }
 
     private fun onFavoritePlaceClicked(lat: Double, lon: Double, placeName: String) {
         val bundle = Bundle().apply {

@@ -26,7 +26,10 @@ import com.example.skycast.Alert.Model.AlertDatabase
 import com.example.skycast.Alert.Model.AlertRepository
 import com.example.skycast.Alert.ViewModel.AlertViewModel
 import com.example.skycast.Alert.ViewModel.AlertViewModelFactory
+import com.example.skycast.MainActivity
 import com.example.skycast.R
+import com.example.skycast.Settings.SettingsManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -35,6 +38,8 @@ class AlertFragment : Fragment() {
     private lateinit var alertViewModel: AlertViewModel
     private lateinit var alertAdapter: AlertAdapter
     private val alerts = mutableListOf<Alert>()
+    private lateinit var settingsManager: SettingsManager
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,14 +57,45 @@ class AlertFragment : Fragment() {
         val repository = AlertRepository(alertDao)
         val factory = AlertViewModelFactory(repository)
         alertViewModel = ViewModelProvider(this, factory).get(AlertViewModel::class.java)
+        settingsManager = SettingsManager(requireContext())
 
         imgBtnAddAlert.setOnClickListener {
-            showAddAlertDialog()
+            Log.d("AlertFragment", "Add Alert button clicked")
+
+            val notificationsEnabled = settingsManager.isNotificationsEnabled()
+            Log.d("AlertFragment", "Notifications enabled status: $notificationsEnabled")
+
+            if (notificationsEnabled) {
+                Log.d("AlertFragment", "Notifications are enabled - showing Add Alert dialog")
+                showAddAlertDialog()
+            } else {
+                Log.d("AlertFragment", "Notifications are disabled - showing Snackbar with error")
+                showNotificationsDisabledError(view)
+            }
         }
+
 
         observeAlerts()
         return view
     }
+
+    private fun isNotificationsEnabled(): Boolean {
+        val sharedPreferences = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("notifications", "Enabled") == "Enabled"
+    }
+
+    private fun showNotificationsDisabledError(view: View) {
+        Snackbar.make(view, "Notifications are disabled. Enable them in Settings to add alerts.", Snackbar.LENGTH_LONG)
+            .setAction("Settings") {
+                navigateToSettingsFragment()
+            }
+            .show()
+    }
+
+    private fun navigateToSettingsFragment() {
+        (requireActivity() as MainActivity).viewPager.setCurrentItem(3, true)
+    }
+
 
     private fun showAddAlertDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_alert, null)

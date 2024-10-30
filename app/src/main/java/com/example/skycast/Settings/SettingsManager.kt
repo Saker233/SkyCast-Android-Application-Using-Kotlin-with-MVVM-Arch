@@ -17,9 +17,6 @@ class SettingsManager(context: Context) {
 
         const val LANGUAGE_ENGLISH = "English"
         const val LANGUAGE_ARABIC = "Arabic"
-
-        const val NOTIFICATIONS_ENABLED = "Enabled"
-        const val NOTIFICATIONS_DISABLED = "Disabled"
     }
 
     fun setTemperatureUnit(unit: String) {
@@ -39,10 +36,10 @@ class SettingsManager(context: Context) {
     }
 
     fun setNotifications(enabled: Boolean) {
-        preferences.edit().putString(KEY_NOTIFICATIONS, if (enabled) NOTIFICATIONS_ENABLED else NOTIFICATIONS_DISABLED).apply()
+        preferences.edit().putBoolean(KEY_NOTIFICATIONS, enabled).apply()
     }
 
     fun isNotificationsEnabled(): Boolean {
-        return preferences.getString(KEY_NOTIFICATIONS, NOTIFICATIONS_ENABLED) == NOTIFICATIONS_ENABLED
+        return preferences.getBoolean(KEY_NOTIFICATIONS, true)
     }
 }

@@ -27,14 +27,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val fahrenheitButton = view.findViewById<RadioButton>(R.id.btnFahrenheit)
         val kelvinButton = view.findViewById<RadioButton>(R.id.btnKelvin)
 
-        // Set the radio button based on the saved preference
         when (settingsManager.getTemperatureUnit()) {
             SettingsManager.UNIT_CELSIUS -> celsiusButton.isChecked = true
             SettingsManager.UNIT_FAHRENHEIT -> fahrenheitButton.isChecked = true
             SettingsManager.UNIT_KELVIN -> kelvinButton.isChecked = true
         }
 
-        // Save the selected unit preference when changed
         radioGroupUnits.setOnCheckedChangeListener { _, checkedId ->
             val unit = when (checkedId) {
                 R.id.btnCelsius -> SettingsManager.UNIT_CELSIUS
@@ -45,6 +43,25 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             settingsManager.setTemperatureUnit(unit)
             Log.d("SettingsFragment", "Temperature unit changed to: $unit")
         }
+
+
+        val radioGroupNotifications = view.findViewById<RadioGroup>(R.id.radioGroupNotifications)
+        val enableNotificationsButton = view.findViewById<RadioButton>(R.id.btnEnableNotifications)
+        val disableNotificationsButton = view.findViewById<RadioButton>(R.id.btnDisableNotifications)
+
+        if (settingsManager.isNotificationsEnabled()) {
+            enableNotificationsButton.isChecked = true
+        } else {
+            disableNotificationsButton.isChecked = true
+        }
+
+        radioGroupNotifications.setOnCheckedChangeListener { _, checkedId ->
+            val notificationsEnabled = checkedId == R.id.btnEnableNotifications
+            settingsManager.setNotifications(notificationsEnabled)
+            Log.d("SettingsFragment", "Notifications enabled: $notificationsEnabled")
+        }
     }
 }
+
+
 
