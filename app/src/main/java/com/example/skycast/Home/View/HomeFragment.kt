@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.skycast.Home.ViewModel.HomeViewModel
@@ -20,9 +21,11 @@ import com.example.skycast.Home.ViewModel.HomeViewModelFactory
 import com.example.skycast.Location.LocationHelper
 import com.example.skycast.R
 import com.example.skycast.Repo.WeatherRepository
+import com.example.skycast.Settings.SettingsManager
 import com.example.skycast.db.FavoritePlacesDatabase
 import com.example.skycast.db.PlaceDao
 import com.example.skycast.model.CurrentResponseApi
+import com.example.skycast.model.FiveDaysResponseApi
 import com.github.matteobattilana.weather.PrecipType
 import com.github.matteobattilana.weather.WeatherView
 import java.util.Calendar
@@ -57,6 +60,10 @@ class HomeFragment : Fragment() {
     private lateinit var locationHelper: LocationHelper
     private var isWeatherFetched = false
 
+    private lateinit var settingsManager: SettingsManager
+
+
+    private var weatherList: List<FiveDaysResponseApi.data> = emptyList()
 
 
 
@@ -87,15 +94,21 @@ class HomeFragment : Fragment() {
         btnRefresh = view.findViewById(R.id.btnRefresh)
 
         // issue
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        settingsManager = SettingsManager(requireContext())
+
+
         val apiService = RetrofitHelper.service
         val placeDao = FavoritePlacesDatabase.getDatabase(requireContext()).placeDao()
         val weatherRepository = WeatherRepository(apiService, placeDao)
-        val factory = HomeViewModelFactory(weatherRepository)
+        val factory = HomeViewModelFactory(weatherRepository, settingsManager)
+
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
 
-
+        val temperatureUnit = settingsManager.getTemperatureUnit()
         forecastView = view.findViewById(R.id.forecastView)
-        weatherAdapter = WeatherAdapter(emptyList())
+        weatherAdapter = WeatherAdapter(weatherList, temperatureUnit)
         forecastView.adapter = weatherAdapter
 
         forecastView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -107,8 +120,12 @@ class HomeFragment : Fragment() {
         btnRefresh.setOnClickListener {
             isWeatherFetched = false
             checkLocationAndFetchWeather()
+            val temperatureUnit = settingsManager.getTemperatureUnit()
+            weatherAdapter.updateTemperatureUnit(temperatureUnit)
             observeWeatherData()
+
         }
+
 
 
 
@@ -192,7 +209,8 @@ class HomeFragment : Fragment() {
                 when (result) {
                     is Result.Success -> {
                         Log.d("HomeFragment", "Five-day weather data: ${result.data}")
-                        weatherAdapter.updateWeatherList(result.data.list ?: emptyList())
+                        weatherList = result.data.list ?: emptyList()
+                        weatherAdapter.updateWeatherList(weatherList)
                     }
                     is Result.Loading -> {
                     }
@@ -204,6 +222,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchWeather(lat: Double, lon: Double) {
+
+
         lifecycleScope.launch {
             viewModel.fetchWeatherByCoordinates(lat, lon, "85f1176e73af023bdc219b8e180d44d6")
         }
@@ -213,27 +233,46 @@ class HomeFragment : Fragment() {
     fun updateWeatherUI(weatherResponse: CurrentResponseApi) {
         weatherResponse?.let {
             cityTextView.text = it.name ?: "Unknown City"
-            currentTempTextView.text = "${Math.round(it.main?.temp ?: 0.0)}°"
-            maxTempTextView.text = "${Math.round(it.main?.tempMax ?: 0.0)}°"
-            minTempTextView.text = "${Math.round(it.main?.tempMin ?: 0.0)}°"
-            humidityTextView.text = "${Math.round((it.main?.humidity ?: 0.0).toDouble())}%"
-            windTextView.text = "${Math.round(it.wind?.speed ?: 0.0)} m/s"
-            statusTextView.text = it.weather?.get(0)?.main ?: "No Status"
+
+            val temperatureUnit = settingsManager.getTemperatureUnit()
+            val unitSymbol = when (temperatureUnit) {
+                SettingsManager.UNIT_CELSIUS -> "°C"
+                SettingsManager.UNIT_FAHRENHEIT -> "°F"
+                SettingsManager.UNIT_KELVIN -> "K"
+                else -> "K"
+            }
+
+            val currentTemp = (it.main?.temp ?: 0.0).toDouble()
+            val maxTemp = (it.main?.tempMax ?: 0.0).toDouble()
+            val minTemp = (it.main?.tempMin ?: 0.0).toDouble()
+
+            currentTempTextView.text = "${Math.round(currentTemp)}$unitSymbol"
+            maxTempTextView.text = "${Math.round(maxTemp)}$unitSymbol"
+            minTempTextView.text = "${Math.round(minTemp)}$unitSymbol"
+
+            val humidity = (it.main?.humidity ?: 0).toDouble()
+            humidityTextView.text = "${Math.round(humidity)}%"
             pressureTxt.text = "${it.main?.pressure ?: 0} hPa"
             cloudTxt.text = "${it.clouds?.all ?: 0}%"
+
+            val windSpeed = (it.wind?.speed ?: 0.0).toDouble()
+            val windSpeedUnit = if (temperatureUnit == SettingsManager.UNIT_FAHRENHEIT) "mph" else "m/s"
+            windTextView.text = "${Math.round(windSpeed)} $windSpeedUnit"
+
+            statusTextView.text = it.weather?.get(0)?.main ?: "No Status"
 
             val apiTimeInMillis = (it.dt?.toLong() ?: 0L) * 1000L
             val timezoneOffsetInMillis = (it.timezone?.toLong() ?: 0L) * 1000L
             val isNight = isNightNow(apiTimeInMillis, timezoneOffsetInMillis)
-            val drawable = if(isNight) R.drawable.night_bg
-            else {
-                setDynamicWallpaper(it.weather?.get(0)?.icon?:"-")
-            }
 
+            val drawable = if (isNight) R.drawable.night_bg else setDynamicWallpaper(it.weather?.get(0)?.icon ?: "-")
             bgImage.setImageResource(drawable)
-            setEffectRain(it.weather?.get(0)?.icon?:"-")
+
+            setEffectRain(it.weather?.get(0)?.icon ?: "-")
         }
     }
+
+
 
 
 

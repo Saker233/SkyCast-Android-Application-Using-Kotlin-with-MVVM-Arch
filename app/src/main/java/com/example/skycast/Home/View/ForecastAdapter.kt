@@ -12,8 +12,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class WeatherAdapter(private var weatherList: List<FiveDaysResponseApi.data>) :
-    RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
+class WeatherAdapter(
+    private var weatherList: List<FiveDaysResponseApi.data>,
+    private var temperatureUnit: String
+) : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
     inner class WeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val dayTxt: TextView = itemView.findViewById(R.id.dayTxt)
@@ -27,7 +29,6 @@ class WeatherAdapter(private var weatherList: List<FiveDaysResponseApi.data>) :
             .inflate(R.layout.item_day_forecast, parent, false)
         return WeatherViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         val weatherData = weatherList[position]
@@ -47,8 +48,8 @@ class WeatherAdapter(private var weatherList: List<FiveDaysResponseApi.data>) :
 
         holder.hourTxt.text = hour?.let { hourFormat.format(it) } ?: "Unknown Hour"
 
-
-        holder.tempTxt.text = "${Math.round(weatherData.main?.temp ?: 0.0)}°"
+        val temperature = convertTemperature(weatherData.main?.temp ?: 0.0)
+        holder.tempTxt.text = "${Math.round(temperature)}°${getUnitSymbol()}"
 
         val iconCode = weatherData.weather?.get(0)?.icon ?: "01d"
         val iconResId = getIconResource(iconCode)
@@ -65,6 +66,27 @@ class WeatherAdapter(private var weatherList: List<FiveDaysResponseApi.data>) :
             "13d" -> R.drawable.snowy
             else -> R.drawable.sunny
         }
+    }
+
+    private fun convertTemperature(tempInKelvin: Double): Double {
+        return when (temperatureUnit) {
+            "Celsius" -> tempInKelvin - 273.15
+            "Fahrenheit" -> (tempInKelvin - 273.15) * 9 / 5 + 32
+            else -> tempInKelvin
+        }
+    }
+
+    private fun getUnitSymbol(): String {
+        return when (temperatureUnit) {
+            "Celsius" -> "C"
+            "Fahrenheit" -> "F"
+            else -> "K"
+        }
+    }
+
+    fun updateTemperatureUnit(newUnit: String) {
+        temperatureUnit = newUnit
+        notifyDataSetChanged()
     }
 
     fun updateWeatherList(newWeatherList: List<FiveDaysResponseApi.data>) {

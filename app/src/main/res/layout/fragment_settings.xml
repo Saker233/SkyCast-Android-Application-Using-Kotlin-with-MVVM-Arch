@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -26,41 +27,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="134dp"
+        android:layout_marginTop="24dp"
         android:text="@string/temp"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/radioGroupUnits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="185dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
 
         <RadioButton
             android:id="@+id/btnCelsius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/celsisu"
-            android:textColor="@color/white" />
+            android:text="celsius"
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"/>
 
         <RadioButton
             android:id="@+id/btnFahrenheit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fahrenheit"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"
+            />
 
         <RadioButton
             android:id="@+id/btnKelvin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/kelvin"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"
+            />
     </RadioGroup>
 
     <TextView
@@ -68,18 +74,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="47dp"
+        android:layout_marginTop="24dp"
         android:text="@string/lang"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupUnits" />
 
     <RadioGroup
         android:id="@+id/radioGroup2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textView5">
 
@@ -88,14 +94,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/english"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"
+            />
 
         <RadioButton
             android:id="@+id/btnArabic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/arabic"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"
+            />
     </RadioGroup>
 
     <TextView
@@ -103,33 +113,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="51dp"
-        android:text="Notifications"
+        android:layout_marginTop="24dp"
+        android:text="notifications"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
 
     <RadioGroup
+        android:id="@+id/radioGroup3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
-        android:layout_marginTop="635dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView6">
 
         <RadioButton
             android:id="@+id/btnEnable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/emable"
-            android:textColor="@color/white" />
+            android:text="enable"
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"
+            />
 
         <RadioButton
             android:id="@+id/btnDisable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/disable"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:buttonTint="@color/radio_button_selector"
+            />
     </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

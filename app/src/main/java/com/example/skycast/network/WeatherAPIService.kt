@@ -14,7 +14,8 @@ interface ApiService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
-        @Query("units") units: String
+        @Query("units") units: String,
+        @Query("lang") lang: String
     ): Response<CurrentResponseApi>
 
     @GET("data/2.5/forecast")
@@ -22,7 +23,8 @@ interface ApiService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
-        @Query("units") units: String
+        @Query("units") units: String,
+        @Query("lang") lang: String
     ): Response<FiveDaysResponseApi>
 }
 

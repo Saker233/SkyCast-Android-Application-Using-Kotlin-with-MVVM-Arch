@@ -16,45 +16,50 @@ class WeatherRepository(
     private val placeDao: PlaceDao
 ) {
 
-
-    suspend fun getWeatherByCoordinates(lat: Double, lon: Double, apiKey: String, units: String): Result<CurrentResponseApi> {
+    suspend fun getWeatherByCoordinates(
+        lat: Double,
+        lon: Double,
+        apiKey: String,
+        units: String,
+        lang: String
+    ): Result<CurrentResponseApi> {
         return try {
-            val response = weatherApiService.getWeatherByCoordinates(lat, lon, apiKey, units)
-            if (response.isSuccessful) {
-                Result.Success(response.body()!!)
-            } else {
-                Result.Failure("Error fetching weather data")
-            }
+            val response = weatherApiService.getWeatherByCoordinates(lat, lon, apiKey, units, lang)
+            handleResponse(response)
         } catch (e: Exception) {
             Result.Failure("Network error: ${e.message}")
         }
     }
 
-
-    suspend fun getFiveDayWeatherByCoordinates(lat: Double, lon: Double, apiKey: String, units: String): Result<FiveDaysResponseApi> {
+    suspend fun getFiveDayWeatherByCoordinates(
+        lat: Double,
+        lon: Double,
+        apiKey: String,
+        units: String,
+        lang: String
+    ): Result<FiveDaysResponseApi> {
         return try {
-            val response = weatherApiService.getFiveDayWeatherByCoordinates(lat, lon, apiKey, units)
+            val response = weatherApiService.getFiveDayWeatherByCoordinates(lat, lon, apiKey, units, lang)
             Log.d("WeatherRepository", "API Response: $response")
             handleResponse(response)
         } catch (e: Exception) {
             Result.Failure("Network error: ${e.message ?: "Unknown error"}")
-
         }
     }
-
 
     private fun <T> handleResponse(response: retrofit2.Response<T>): Result<T> {
         return if (response.isSuccessful && response.body() != null) {
             Result.Success(response.body()!!)
         } else {
-            Result.Failure("Failed to fetch data: ${response.message()}")
-
+            val errorMessage = "Failed to fetch data: ${response.message()} (Code: ${response.code()})"
+            Log.e("WeatherRepository", errorMessage)
+            Result.Failure(errorMessage)
         }
     }
 
     suspend fun insertPlace(place: FavoritePlaceItem): Result<Unit> {
         return withContext(Dispatchers.IO) {
-            return@withContext try {
+            try {
                 placeDao.insert(place)
                 Result.Success(Unit)
             } catch (e: Exception) {
@@ -72,7 +77,4 @@ class WeatherRepository(
     fun getAllPlaces(): Flow<List<FavoritePlaceItem>> {
         return placeDao.getAllPlaces()
     }
-
-
-
 }

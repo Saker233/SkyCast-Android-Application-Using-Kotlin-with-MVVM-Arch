@@ -15,6 +15,7 @@ import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.skycast.R
@@ -25,6 +26,7 @@ import com.example.skycast.Home.ViewModel.HomeViewModel
 import com.example.skycast.Home.ViewModel.HomeViewModelFactory
 import com.example.skycast.MainActivity
 import com.example.skycast.Repo.WeatherRepository
+import com.example.skycast.Settings.SettingsManager
 import com.example.skycast.db.FavoritePlacesDatabase
 import com.example.skycast.model.FavoritePlaceItem
 import com.example.skycast.network.RetrofitHelper
@@ -39,6 +41,8 @@ class FavoriteFragment : Fragment() {
     private lateinit var favoriteViewModel: FavoriteViewModel
     private lateinit var imgBtnAdd: ImageView
     private lateinit var homeViewModel: HomeViewModel
+
+    private lateinit var settingsManager: SettingsManager
 
 
     private val REQUEST_CODE_MAP = 100
@@ -65,8 +69,11 @@ class FavoriteFragment : Fragment() {
         val weatherRepository = WeatherRepository(apiService, placeDao)
         val factory1 = FavoriteViewModelFactory(weatherRepository)
         favoriteViewModel = ViewModelProvider(this, factory1).get(FavoriteViewModel::class.java)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        val factory2 = HomeViewModelFactory(weatherRepository)
+        settingsManager = SettingsManager(requireContext())
+
+        val factory2 = HomeViewModelFactory(weatherRepository, settingsManager)
         homeViewModel = ViewModelProvider(this, factory2).get(HomeViewModel::class.java)
 
         observeFavoritePlaces()

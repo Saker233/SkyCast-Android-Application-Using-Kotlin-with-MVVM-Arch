@@ -24,6 +24,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.skycast.network.Result
 
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
+
 class AlertReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -55,9 +58,14 @@ class AlertReceiver : BroadcastReceiver() {
         val placeDao = FavoritePlacesDatabase.getDatabase(context).placeDao()
         val weatherRepository = WeatherRepository(RetrofitHelper.service, placeDao)
 
+        // Retrieve language preference from SharedPreferences
+        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val language = sharedPreferences.getString("language", "en") ?: "en"
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val weatherResult = weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, "metric")
+                // Pass language as a parameter
+                val weatherResult = weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, "metric", language)
                 val message = if (weatherResult is Result.Success) {
                     buildWeatherMessage(weatherResult.data, duration)
                 } else {
@@ -126,3 +134,4 @@ class AlertReceiver : BroadcastReceiver() {
         }
     }
 }
+
