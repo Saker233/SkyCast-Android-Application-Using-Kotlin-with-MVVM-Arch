@@ -60,6 +60,26 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             settingsManager.setNotifications(notificationsEnabled)
             Log.d("SettingsFragment", "Notifications enabled: $notificationsEnabled")
         }
+
+
+        val radioGroupLanguage = view.findViewById<RadioGroup>(R.id.radioGroupLanguage)
+        val englishButton = view.findViewById<RadioButton>(R.id.btnEnglish)
+        val arabicButton = view.findViewById<RadioButton>(R.id.btnArabic)
+
+        when (settingsManager.getLanguage()) {
+            SettingsManager.LANGUAGE_ENGLISH -> englishButton.isChecked = true
+            SettingsManager.LANGUAGE_ARABIC -> arabicButton.isChecked = true
+        }
+
+        radioGroupLanguage.setOnCheckedChangeListener { _, checkedId ->
+            val language = when (checkedId) {
+                R.id.btnEnglish -> SettingsManager.LANGUAGE_ENGLISH
+                R.id.btnArabic -> SettingsManager.LANGUAGE_ARABIC
+                else -> SettingsManager.LANGUAGE_ENGLISH
+            }
+            settingsManager.setLanguage(language)
+            Log.d("SettingsFragment", "Language changed to: $language")
+        }
     }
 }
 

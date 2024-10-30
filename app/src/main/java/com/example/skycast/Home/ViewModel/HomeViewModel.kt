@@ -16,7 +16,7 @@ import com.example.skycast.network.Result
 
 class HomeViewModel(
     private val weatherRepository: WeatherRepository,
-    private val settingsManager: SettingsManager // Use SettingsManager here
+    private val settingsManager: SettingsManager
 ) : ViewModel() {
 
     private val _weatherData = MutableStateFlow<Result<CurrentResponseApi>>(Result.Loading)
@@ -25,7 +25,6 @@ class HomeViewModel(
     private val _forecastData = MutableStateFlow<Result<FiveDaysResponseApi>>(Result.Loading)
     val forecastData: StateFlow<Result<FiveDaysResponseApi>> get() = _forecastData
 
-    // Listener to log and update on preference change
     private val sharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == SettingsManager.KEY_TEMPERATURE_UNIT || key == SettingsManager.KEY_LANGUAGE) {
@@ -37,7 +36,6 @@ class HomeViewModel(
         settingsManager.preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
     }
 
-    // Fetch units and language from SettingsManager
     private fun getUnits(): String = settingsManager.getTemperatureUnit()
     private fun getLanguage(): String = settingsManager.getLanguage()
 
@@ -45,14 +43,12 @@ class HomeViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             _weatherData.value = Result.Loading
 
-            // Set the appropriate units parameter based on the user's choice
             val units = when (settingsManager.getTemperatureUnit()) {
                 SettingsManager.UNIT_CELSIUS -> "metric"
                 SettingsManager.UNIT_FAHRENHEIT -> "imperial"
                 else -> null // Omit units parameter for Kelvin (default)
             }
 
-            // Make the API call with or without units parameter based on the selection
             val result = if (units != null) {
                 weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, units, getLanguage())
             } else {

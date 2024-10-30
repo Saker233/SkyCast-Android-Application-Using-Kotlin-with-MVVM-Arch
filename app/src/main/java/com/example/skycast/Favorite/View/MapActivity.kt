@@ -328,7 +328,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.EditText
 import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
@@ -360,7 +359,6 @@ class MapActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_map)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
