@@ -2,6 +2,8 @@ package com.example.skycast.Settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
+import java.util.Locale
 
 class SettingsManager(context: Context) {
     val preferences: SharedPreferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
@@ -41,5 +43,16 @@ class SettingsManager(context: Context) {
 
     fun isNotificationsEnabled(): Boolean {
         return preferences.getBoolean(KEY_NOTIFICATIONS, true)
+    }
+
+    fun applyLanguage(context: Context) {
+        val locale = when (getLanguage()) {
+            LANGUAGE_ARABIC -> Locale("ar")
+            else -> Locale("en")
+        }
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 }

@@ -101,7 +101,7 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wind"
+                android:text="@string/wind"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
@@ -214,7 +214,7 @@
                 android:id="@+id/textView33"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Humidity"
+                android:text="@string/humidity"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
@@ -222,7 +222,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -261,7 +260,7 @@
                 android:id="@+id/textViewPressure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Pressure"
+                android:text="@string/pressure"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
@@ -294,14 +293,13 @@
                 android:id="@+id/textViewCloud"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cloud"
+                android:text="@string/cloud"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
 
     </LinearLayout>
-
 
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView"
@@ -334,7 +332,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </eightbitlab.com.blurview.BlurView>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

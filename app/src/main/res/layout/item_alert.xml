@@ -12,7 +12,7 @@
         android:id="@+id/tv_alert_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Alert Title"
+        android:text="@string/alert_title"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"

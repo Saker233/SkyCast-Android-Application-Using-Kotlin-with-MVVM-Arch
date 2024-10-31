@@ -25,6 +25,6 @@
         android:layout_alignParentTop="true"
         android:layout_margin="30dp"
         android:background="@android:drawable/edit_text"
-        android:hint="Search for a location"
+        android:hint="@string/search_location"
         android:padding="10dp" />
 </RelativeLayout>

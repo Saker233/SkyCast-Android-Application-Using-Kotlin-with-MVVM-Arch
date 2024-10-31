@@ -1,6 +1,7 @@
 package com.example.skycast.Settings
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -59,6 +60,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             val notificationsEnabled = checkedId == R.id.btnEnableNotifications
             settingsManager.setNotifications(notificationsEnabled)
             Log.d("SettingsFragment", "Notifications enabled: $notificationsEnabled")
+
+
         }
 
 
@@ -72,13 +75,22 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         }
 
         radioGroupLanguage.setOnCheckedChangeListener { _, checkedId ->
-            val language = when (checkedId) {
+            val newLanguage = when (checkedId) {
                 R.id.btnEnglish -> SettingsManager.LANGUAGE_ENGLISH
                 R.id.btnArabic -> SettingsManager.LANGUAGE_ARABIC
                 else -> SettingsManager.LANGUAGE_ENGLISH
             }
-            settingsManager.setLanguage(language)
-            Log.d("SettingsFragment", "Language changed to: $language")
+
+            if (newLanguage != settingsManager.getLanguage()) {
+                settingsManager.setLanguage(newLanguage)
+                settingsManager.applyLanguage(requireContext())
+                Log.d("SettingsFragment", "Language changed to: $newLanguage")
+
+                val intent = Intent(requireContext(), requireActivity()::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                requireActivity().finishAffinity()
+            }
         }
     }
 }

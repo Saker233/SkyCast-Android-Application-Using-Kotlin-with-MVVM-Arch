@@ -32,6 +32,7 @@ import java.util.Calendar
 import com.example.skycast.network.Result
 import com.example.skycast.network.RetrofitHelper
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class HomeFragment : Fragment() {
@@ -74,7 +75,6 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.home_fragment, container, false)
-
         weatherView = view.findViewById(R.id.weatherView)
         cityTextView = view.findViewById(R.id.txtCity)
         windTextView = view.findViewById(R.id.windTxt)
@@ -108,7 +108,7 @@ class HomeFragment : Fragment() {
 
         val temperatureUnit = settingsManager.getTemperatureUnit()
         forecastView = view.findViewById(R.id.forecastView)
-        weatherAdapter = WeatherAdapter(weatherList, temperatureUnit)
+        weatherAdapter = WeatherAdapter(weatherList, temperatureUnit, settingsManager)
         forecastView.adapter = weatherAdapter
 
         forecastView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -259,7 +259,7 @@ class HomeFragment : Fragment() {
             val windSpeedUnit = if (temperatureUnit == SettingsManager.UNIT_FAHRENHEIT) "mph" else "m/s"
             windTextView.text = "${Math.round(windSpeed)} $windSpeedUnit"
 
-            statusTextView.text = it.weather?.get(0)?.main ?: "No Status"
+            statusTextView.text = it.weather?.get(0)?.description ?: "No Status"
 
             val apiTimeInMillis = (it.dt?.toLong() ?: 0L) * 1000L
             val timezoneOffsetInMillis = (it.timezone?.toLong() ?: 0L) * 1000L
@@ -271,6 +271,7 @@ class HomeFragment : Fragment() {
             setEffectRain(it.weather?.get(0)?.icon ?: "-")
         }
     }
+
 
 
 

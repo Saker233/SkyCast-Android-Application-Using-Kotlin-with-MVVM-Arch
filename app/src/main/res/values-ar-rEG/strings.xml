@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">سكاي كاست</string>
+    <string name="hello_blank_fragment">مرحبا بالقطعة الفارغة</string>
+    <string name="favplaces">الأماكن المفضلة:</string>
+    <string name="removefavroite">إزالة من المفضلة!</string>
+    <string name="favvplaces">الأماكن المفضلة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="temp">وحدة درجة الحرارة</string>
+    <string name="celsisu">درجة مئوية</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="kelvin">كلفن</string>
+    <string name="lang">اللغة</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="emable">تفعيل</string>
+    <string name="disable">تعطيل</string>
+    <string name="alert">التنبيهات</string>
+
+    <string name="search_location">ابحث عن موقع</string>
+    <string name="alert_title">عنوان التنبيه</string>
+    <string name="hint_time_format">س:د</string>
+    <string name="duration_seconds">المدة (بالثواني)</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="enable">تفعيل</string>
+
+    <string name="celsius">درجة مئوية</string>
+    <string name="wind">الرياح</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="pressure">الضغط</string>
+    <string name="cloud">الغيوم</string>
+    <string name="place_name">اسم المكان</string>
+    <string name="placeholder_dash">-</string>
+</resources>

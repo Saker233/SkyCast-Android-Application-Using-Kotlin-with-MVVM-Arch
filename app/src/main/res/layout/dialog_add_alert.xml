@@ -8,18 +8,18 @@
         android:id="@+id/titleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Alert Title" />
+        android:hint="@string/alert_title" />
 
     <EditText
         android:id="@+id/timeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="HH:mm" />
+        android:hint="@string/hint_time_format" />
 
     <EditText
         android:id="@+id/durationEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Duration (seconds)" />
+        android:hint="@string/duration_seconds" />
 
 </LinearLayout>

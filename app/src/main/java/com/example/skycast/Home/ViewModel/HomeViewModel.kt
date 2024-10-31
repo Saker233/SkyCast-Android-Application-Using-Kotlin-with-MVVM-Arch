@@ -36,35 +36,35 @@ class HomeViewModel(
         settingsManager.preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
     }
 
-    private fun getUnits(): String = settingsManager.getTemperatureUnit()
-    private fun getLanguage(): String = settingsManager.getLanguage()
+    private fun getUnits(): String {
+        return when (settingsManager.getTemperatureUnit()) {
+            SettingsManager.UNIT_CELSIUS -> "metric"
+            SettingsManager.UNIT_FAHRENHEIT -> "imperial"
+            else -> "standard"
+        }
+    }
+
+    private fun getLanguage(): String {
+        return when (settingsManager.getLanguage()) {
+            SettingsManager.LANGUAGE_ARABIC -> "ar"
+            else -> "en"
+        }
+    }
 
     fun fetchWeatherByCoordinates(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _weatherData.value = Result.Loading
 
-            val units = when (settingsManager.getTemperatureUnit()) {
-                SettingsManager.UNIT_CELSIUS -> "metric"
-                SettingsManager.UNIT_FAHRENHEIT -> "imperial"
-                else -> null // Omit units parameter for Kelvin (default)
-            }
-
-            val result = if (units != null) {
-                weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, units, getLanguage())
-            } else {
-                weatherRepository.getWeatherByCoordinates(lat, lon, apiKey,
-                    null.toString(), getLanguage())
-            }
-
+            val result = weatherRepository.getWeatherByCoordinates(lat, lon, apiKey, getUnits(), getLanguage())
             Log.d("HomeViewModel", "Weather Result: $result")
             _weatherData.emit(result)
         }
     }
 
-
     fun fetchFiveDayWeatherByCoordinates(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _forecastData.value = Result.Loading
+
             val result = weatherRepository.getFiveDayWeatherByCoordinates(lat, lon, apiKey, getUnits(), getLanguage())
             Log.d("HomeViewModel", "Forecast Result: $result")
             _forecastData.emit(result)

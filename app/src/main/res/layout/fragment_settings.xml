@@ -46,7 +46,7 @@
             android:id="@+id/btnCelsius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="celsius"
+            android:text="@string/celsius"
             android:textColor="@color/white"
             android:buttonTint="@color/radio_button_selector"/>
 
@@ -114,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="24dp"
-        android:text="Notifications"
+        android:text="@string/notifications"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -132,7 +132,7 @@
             android:id="@+id/btnEnableNotifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="enable"
+            android:text="@string/enable"
             android:textColor="@color/white"
             android:buttonTint="@color/radio_button_selector"
             />

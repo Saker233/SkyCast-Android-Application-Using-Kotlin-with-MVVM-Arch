@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.skycast.R
+import com.example.skycast.Settings.SettingsManager
 import com.example.skycast.model.FiveDaysResponseApi
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -14,7 +15,8 @@ import java.util.Locale
 
 class WeatherAdapter(
     private var weatherList: List<FiveDaysResponseApi.data>,
-    private var temperatureUnit: String
+    private var temperatureUnit: String,
+    private val settingsManager: SettingsManager // Pass SettingsManager to access the language setting
 ) : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
     inner class WeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,24 +35,35 @@ class WeatherAdapter(
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         val weatherData = weatherList[position]
 
+        // Determine the correct locale based on the language setting
+        val locale = if (settingsManager.getLanguage() == SettingsManager.LANGUAGE_ARABIC) {
+            Locale("ar")
+        } else {
+            Locale.getDefault()
+        }
+
+        // Parse date and time
         val dateTime = weatherData.dtTxt ?: "Unknown Date"
         val dateParts = dateTime.split(" ")
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val date: Date? = dateFormat.parse(dateParts[0])
 
-        val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
+        // Use Arabic locale for day formatting if Arabic is selected
+        val dayFormat = SimpleDateFormat("EEE", locale)
         holder.dayTxt.text = date?.let { dayFormat.format(it) } ?: "Unknown Day"
 
         val timeParts = dateParts.getOrNull(1)?.split(":") ?: listOf("00", "00")
-        val hourFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-        val hour = SimpleDateFormat("HH:mm").parse("${timeParts[0]}:${timeParts[1]}")
+        val hourFormat = SimpleDateFormat("h:mm a", locale)
+        val hour = SimpleDateFormat("HH:mm", locale).parse("${timeParts[0]}:${timeParts[1]}")
 
         holder.hourTxt.text = hour?.let { hourFormat.format(it) } ?: "Unknown Hour"
 
-        val temperature = convertTemperature(weatherData.main?.temp ?: 0.0)
+        // Set temperature with the appropriate unit
+        val temperature = weatherData.main?.temp ?: 0.0
         holder.tempTxt.text = "${Math.round(temperature)}°${getUnitSymbol()}"
 
+        // Set the weather icon based on the icon code
         val iconCode = weatherData.weather?.get(0)?.icon ?: "01d"
         val iconResId = getIconResource(iconCode)
         holder.pic.setImageResource(iconResId)
@@ -65,14 +78,6 @@ class WeatherAdapter(
             "09d" -> R.drawable.rainy
             "13d" -> R.drawable.snowy
             else -> R.drawable.sunny
-        }
-    }
-
-    private fun convertTemperature(tempInKelvin: Double): Double {
-        return when (temperatureUnit) {
-            "Celsius" -> tempInKelvin - 273.15
-            "Fahrenheit" -> (tempInKelvin - 273.15) * 9 / 5 + 32
-            else -> tempInKelvin
         }
     }
 
