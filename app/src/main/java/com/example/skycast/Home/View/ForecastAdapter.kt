@@ -42,7 +42,6 @@ class WeatherAdapter(
             Locale.getDefault()
         }
 
-        // Parse date and time
         val dateTime = weatherData.dtTxt ?: "Unknown Date"
         val dateParts = dateTime.split(" ")
 
@@ -59,7 +58,6 @@ class WeatherAdapter(
 
         holder.hourTxt.text = hour?.let { hourFormat.format(it) } ?: "Unknown Hour"
 
-        // Set temperature with the appropriate unit
         val temperature = weatherData.main?.temp ?: 0.0
         holder.tempTxt.text = "${Math.round(temperature)}°${getUnitSymbol()}"
 
