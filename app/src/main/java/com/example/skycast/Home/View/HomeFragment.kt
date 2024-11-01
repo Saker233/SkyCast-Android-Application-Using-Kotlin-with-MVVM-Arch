@@ -26,6 +26,7 @@ import com.example.skycast.db.FavoritePlacesDatabase
 import com.example.skycast.db.PlaceDao
 import com.example.skycast.model.CurrentResponseApi
 import com.example.skycast.model.FiveDaysResponseApi
+import com.example.skycast.model.SharedPreferencesHelper
 import com.github.matteobattilana.weather.PrecipType
 import com.github.matteobattilana.weather.WeatherView
 import java.util.Calendar
@@ -65,6 +66,10 @@ class HomeFragment : Fragment() {
 
 
     private var weatherList: List<FiveDaysResponseApi.data> = emptyList()
+
+
+    private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
+
 
 
 
@@ -115,6 +120,8 @@ class HomeFragment : Fragment() {
 
 
         locationHelper = LocationHelper(requireContext())
+        sharedPreferencesHelper = SharedPreferencesHelper(requireContext())
+
 
 
         btnRefresh.setOnClickListener {
@@ -233,6 +240,12 @@ class HomeFragment : Fragment() {
     fun updateWeatherUI(weatherResponse: CurrentResponseApi) {
         weatherResponse?.let {
             cityTextView.text = it.name ?: "Unknown City"
+
+
+            sharedPreferencesHelper.saveWeatherData(it)
+            Log.d("HomeFragment", "Saving weather data to SharedPreferences: $it")
+
+
 
             val temperatureUnit = settingsManager.getTemperatureUnit()
             val unitSymbol = when (temperatureUnit) {

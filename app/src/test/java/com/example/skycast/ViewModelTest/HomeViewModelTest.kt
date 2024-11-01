@@ -77,6 +77,7 @@ class HomeViewModelTest {
     @Test
     fun fetchWeatherByCoordinates_weatherDataIsNotNull() = runTest {
         // Arrange
+        // Creates a mock response object for the current weather API response
         val mockResponse = CurrentResponseApi(
             base = "stations",
             clouds = CurrentResponseApi.Clouds(all = 75),
@@ -116,11 +117,15 @@ class HomeViewModelTest {
             wind = CurrentResponseApi.Wind(deg = 200, gust = 5.0, speed = 3.0)
         )
 
+        // Configures the repository to return a successful result with the mock response data
         coEvery { repository.getWeatherByCoordinates(30.0, 31.0, "85f1176e73af023bdc219b8e180d44d6", "metric", "en") } returns Result.Success(mockResponse)
 
         // Act
+        // Calls fetchWeatherByCoordinates in the ViewModel with valid coordinates and API key
         homeViewModel.fetchWeatherByCoordinates(30.0, 31.0, "85f1176e73af023bdc219b8e180d44d6")
 
+        // Assert
+        // Checks that the weatherData is not null, ensuring data is successfully fetched and stored in ViewModel
         assertThat(homeViewModel.weatherData.first(), not(nullValue()))
     }
 
@@ -128,6 +133,8 @@ class HomeViewModelTest {
     @Test
     fun fetchFiveDayWeatherByCoordinates_forecastDataIsNotNull() = runTest {
         // Arrange
+        // Creates a mock response object for the five-day forecast API response
+
         val mockForecastResponse = FiveDaysResponseApi(
             city = FiveDaysResponseApi.City(
                 coord = FiveDaysResponseApi.City.Coord(lat = 30.0, lon = 31.0),
@@ -175,12 +182,18 @@ class HomeViewModelTest {
             )
         )
 
-        coEvery { repository.getFiveDayWeatherByCoordinates(30.0, 31.0, "API_KEY", "metric", "en") } returns Result.Success(mockForecastResponse)
+        // Configures the repository to return a successful result with the mock forecast response
+
+        coEvery { repository.getFiveDayWeatherByCoordinates(30.0, 31.0, "85f1176e73af023bdc219b8e180d44d6", "metric", "en") } returns Result.Success(mockForecastResponse)
 
         // Act
-        homeViewModel.fetchFiveDayWeatherByCoordinates(30.0, 31.0, "API_KEY")
+        // Calls fetchFiveDayWeatherByCoordinates in the ViewModel with valid coordinates and API key
+
+        homeViewModel.fetchFiveDayWeatherByCoordinates(30.0, 31.0, "85f1176e73af023bdc219b8e180d44d6")
 
         // Assert
+        // Checks that forecastData is not null, ensuring forecast data is successfully fetched and stored in ViewModel
+
         assertThat(homeViewModel.forecastData.first(), not(nullValue()))
     }
 

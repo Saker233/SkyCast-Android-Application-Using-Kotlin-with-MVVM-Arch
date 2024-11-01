@@ -56,27 +56,35 @@ class WeatherRepositoryTest {
     @Test
     fun getWeatherByCoordinates_success() = runBlockingTest {
         // Use the pre-initialized test data for a successful response
+        // FakeApiService is set up to return a successful response with test data
         val fakeApiService = FakeApiService(currentWeatherResponse = Response.success(testCurrentResponseApi))
         val fakePlaceDao = FakePlaceDao()
+        // Create an instance of WeatherRepository using the fake API service and DAO
         val repository = WeatherRepository(fakeApiService, fakePlaceDao)
 
-        // When calling getWeatherByCoordinates
+        // When calling getWeatherByCoordinates with valid inputs
         val result = repository.getWeatherByCoordinates(30.0, 30.0, "85f1176e73af023bdc219b8e180d44d6", "metric", "en")
 
-        // Then the result should be Success
+        // Then the result should be a successful result
+        // Ensures that the function returns a Result.Success type, indicating success
         assertTrue(result is Result.Success)
     }
 
     @Test
     fun getWeatherByCoordinates_failure() = runBlockingTest {
+        // Use the pre-initialized test data for a failed response
+        // FakeApiService is set up to return a 404 error response
         val fakeApiService = FakeApiService(currentWeatherResponse = Response.error(404, okhttp3.ResponseBody.create(null, "")))
         val fakePlaceDao = FakePlaceDao()
+        // Create an instance of WeatherRepository using the fake API service and DAO
         val repository = WeatherRepository(fakeApiService, fakePlaceDao)
 
-        // When calling getWeatherByCoordinates
+        // When calling getWeatherByCoordinates with the same input
         val result = repository.getWeatherByCoordinates(30.0, 30.0, "85f1176e73af023bdc219b8e180d44d6", "metric", "en")
 
-        // Then the result should be Failure
+        // Then the result should be a failure result
+        // Ensures that the function returns a Result.Failure type, indicating an error occurred
         assertTrue(result is Result.Failure)
     }
+
 }

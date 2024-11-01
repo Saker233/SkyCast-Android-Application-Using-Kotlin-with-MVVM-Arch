@@ -45,6 +45,11 @@ class PlaceDaoTest {
         database.close()
     }
 
+
+    //  This test ensures that when a FavoritePlaceItem is inserted into the database,
+    //  it can be retrieved and matches the expected data.
+
+
     @Test
     fun insertPlace_retrievesPlace() = runBlockingTest {
         val place = FavoritePlaceItem(
@@ -56,10 +61,17 @@ class PlaceDaoTest {
 
         placeDao.insert(place)
 
+
+        //  Ensures that only one item was retrieved, matching our expectation that we inserted a single item
+        // Checks that the first (and only) item in the retrieved list is the exact item we inserted
+        // confirming that the data was inserted and retrieved accurately.
         val allPlaces = placeDao.getAllPlaces().first()
         assertThat(allPlaces.size, `is`(1))
         assertThat(allPlaces[0], `is`(place))
     }
+
+    // This test ensures that when a FavoritePlaceItem is inserted and then deleted from the database,
+    // it no longer exists in the database and cannot be retrieved.
 
     @Test
     fun deletePlace_placeIsDeleted() = runBlockingTest {
@@ -69,14 +81,21 @@ class PlaceDaoTest {
             longitude = -74.0,
             placeName = "Delete Test Place"
         )
+
+        // Inserts a new FavoritePlaceItem into the database
         placeDao.insert(place)
 
+        // Ensures that only one item was retrieved, matching our expectation that we inserted a single item
         var allPlaces = placeDao.getAllPlaces().first()
         assertThat(allPlaces.size, `is`(1))
 
+        // Deletes the place by its id
         placeDao.deletePlace(place.id)
 
+        // Retrieves all items again to confirm deletion
+        // Ensures that the list is empty, indicating the item was successfully deleted from the database
         allPlaces = placeDao.getAllPlaces().first()
         assertThat(allPlaces.size, `is`(0))
     }
+
 }

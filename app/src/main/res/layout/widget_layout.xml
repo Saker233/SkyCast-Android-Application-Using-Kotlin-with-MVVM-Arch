@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- City Name -->
+    <TextView
+        android:id="@+id/widgetCityName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City Name"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="8dp"/>
+
+    <!-- Temperature -->
+    <TextView
+        android:id="@+id/widgetTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0°"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/widgetCityName" />
+
+    <!-- Weather Icon -->
+    <ImageView
+        android:id="@+id/widgetWeatherIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/widgetTemperature"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/sunny" />
+
+    <!-- Weather Status (Clear, Cloud, Rainy) -->
+    <TextView
+        android:id="@+id/widgetStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widgetWeatherIcon"
+        android:layout_marginTop="4dp"
+        android:text="Clear"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+    <!-- Wind Speed -->
+    <TextView
+        android:id="@+id/widgetWindSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widgetStatus"
+        android:layout_marginTop="4dp"
+        android:text="Wind: 0 km/h"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <!-- Humidity -->
+    <TextView
+        android:id="@+id/widgetHumidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widgetWindSpeed"
+        android:layout_marginTop="4dp"
+        android:text="Humidity: 0%"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+</RelativeLayout>
